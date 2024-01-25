@@ -2,6 +2,7 @@
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace BlobStorage.Controllers
 {
@@ -9,11 +10,17 @@ namespace BlobStorage.Controllers
 	[Microsoft.AspNetCore.Components.Route("[controller]")]
 	public class BlobStorageController : ControllerBase
 	{
-		[HttpPost("upload")]
+		private readonly IConfiguration _config;
+
+		public BlobStorageController(IConfiguration config)
+        {
+			_config = config;
+		}
+
+        [HttpPost("upload")]
 		public async Task<IActionResult> Upload(IFormFile file)
 		{
-			var connectionString = "DefaultEndpointsProtocol=https;AccountName=storage1sane;AccountKey=jzmbliQaH8pHjCoiKb5PFKCJld2+vSc8HyqL34dGsXy2XOj8Nmrx3bbQcS2uGyrPfhP5YEgt9dCr+AStPiTX4w==;EndpointSuffix=core.windows.net";
-			BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
+			BlobServiceClient blobServiceClient = new BlobServiceClient(_config.GetValue<string>("ConnectionString"));
 
 			var containerName = "documents";
 			BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
@@ -35,7 +42,7 @@ namespace BlobStorage.Controllers
 		[HttpGet("download")]
 		public async Task<IActionResult> Download([FromQuery]string blobName)
 		{
-			var connectionString = "DefaultEndpointsProtocol=https;AccountName=storage1sane;AccountKey=jz...w==;EndpointSuffix=core.windows.net";
+			var connectionString = "DefaultEndpointsProtocol=https;AccountName=storage1sane;AccountKey=jzmbliQaH8pHjCoiKb5PFKCJld2+vSc8HyqL34dGsXy2XOj8Nmrx3bbQcS2uGyrPfhP5YEgt9dCr+AStPiTX4w==;EndpointSuffix=core.windows.net";
 			BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
 
 			var containerName = "documents";
